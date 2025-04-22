@@ -8,12 +8,8 @@ import static ru.altacloud.model.Mode.*;
 
 public class Blower implements ModbusDevice {
 
-    private final Integer workingCurrentConsumption;
-    private final Integer workingOverPressure;
-    private final Integer stoppedOverPressure;
-
-    private final Integer workingUnderPressure;
-    private final Integer stoppedUnderPressure;
+    public record Settings(Integer currentMin, Integer currentMax, Integer currentDelta, Integer overpressureMax,
+                           Integer overpressureMin, Integer underpressureMax) {}
 
     enum RegisterName {
         STATE, MODE,
@@ -21,14 +17,19 @@ public class Blower implements ModbusDevice {
         UNDERPRESSURE, OVERPRESSURE,
         SET_OVERPRESSURE_MAX, SET_OVERPRESSURE_MIN, SET_UNDERPRESSURE_MAX,
         SET_CURRENT_MAX, SET_CURRENT_MIN, SET_CURRENT_DELTA
-    }
 
-    public record Settings(Integer currentMin, Integer currentMax, Integer currentDelta, Integer overpressureMax,
-                           Integer overpressureMin, Integer underpressureMax) {
     }
 
     private final Integer slaveID;
     private final Map<Integer, Register> registers;
+
+    private final Integer workingCurrentConsumption;
+
+    private final Integer workingOverPressure;
+    private final Integer stoppedOverPressure;
+
+    private final Integer workingUnderPressure;
+    private final Integer stoppedUnderPressure;
 
     public Blower(Integer slaveID, Settings settings) {
         Random random = new Random();
@@ -111,7 +112,7 @@ public class Blower implements ModbusDevice {
     }
 
     private Integer generateCurrentConsumption() {
-        if (this.registers.get(STATE.ordinal()).getValue() == OFF.ordinal()) return 0;
+        if (this.registers.get(STATE.ordinal()).getValue() == OFF.ordinal()) return OFF.ordinal();
         return ValueGenerator.generateRandomWithin3Percent(this.workingCurrentConsumption);
     }
 

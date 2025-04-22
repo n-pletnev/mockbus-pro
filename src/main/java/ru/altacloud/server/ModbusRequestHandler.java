@@ -10,14 +10,13 @@ import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.altacloud.model.Blower;
 import ru.altacloud.model.ModbusDevice;
-import ru.altacloud.model.Pump;
 import ru.altacloud.model.Register;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.IntStream;
 
 public class ModbusRequestHandler implements ServiceRequestHandler {
 
@@ -26,11 +25,11 @@ public class ModbusRequestHandler implements ServiceRequestHandler {
     private final Map<Short, ModbusDevice> deviceMap = new ConcurrentHashMap<>();
 
     public ModbusRequestHandler() {
-
-        deviceMap.put((short) 1, ModbusDeviceFactory.createPump(1, 1500, 1700,
-                new Pump.Settings(900, 2000, 500)));
-        deviceMap.put((short)2, ModbusDeviceFactory.createBlower(2,
-                new Blower.Settings(1000, 8000, 1000, 400, 100, 80)));
+        IntStream.range(1, 30).forEach(i -> deviceMap.put((short) i, ModbusDeviceFactory.createVihr450Pump(i)));
+        IntStream.range(30, 60).forEach(i -> deviceMap.put((short) i, ModbusDeviceFactory.createPedrolloPump(i)));
+        IntStream.range(60, 90).forEach(i -> deviceMap.put((short) i, ModbusDeviceFactory.createPumpingUnitPump(i)));
+        IntStream.range(90, 140).forEach(i -> deviceMap.put((short) i, ModbusDeviceFactory.createBlower(i)));
+        //TODO: add all devices
     }
 
     @Override

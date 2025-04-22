@@ -8,8 +8,9 @@ import java.util.List;
 
 public class PumpTest {
 
-    private final Pump pump = new Pump(1, 1500, 2000,
-            new Pump.Settings(1000, 3000, 200));
+    private final Pump pump = new Pump(1,
+            new Pump.Settings(1000, 3000, 200, 100, 1000),
+            new Pump.Restrictions(3800, 4000, 400, 460));
 
     @Test
     public void testCreateNewPump() {
@@ -19,8 +20,8 @@ public class PumpTest {
 
         Assertions.assertThat(pump.readRegister(1).getValue()).isEqualTo(Mode.AUTO.ordinal());
 
-        Assertions.assertThat(pump.readRegister(2).getValue()).isGreaterThanOrEqualTo(1500);
-        Assertions.assertThat(pump.readRegister(2).getValue()).isLessThanOrEqualTo(2000);
+        Assertions.assertThat(pump.readRegister(2).getValue()).isGreaterThanOrEqualTo(3800);
+        Assertions.assertThat(pump.readRegister(2).getValue()).isLessThanOrEqualTo(4500);
 
     }
 
