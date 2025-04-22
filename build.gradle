@@ -22,11 +22,9 @@ repositories {
 dependencies {
 //    implementation 'com.intelligt.modbus:jlibmodbus:1.2.9.5'
     implementation 'com.ghgande:j2mod:3.2.1'
-// SLF4J API
-    implementation 'org.slf4j:slf4j-api:2.0.9'
 
-    // Logback Classic (реализация SLF4J)
-    implementation 'ch.qos.logback:logback-classic:1.4.11'
+    implementation 'org.slf4j:slf4j-api:2.0.17'
+    implementation 'ch.qos.logback:logback-classic:1.5.13'
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation "org.assertj:assertj-core:3.11.1"

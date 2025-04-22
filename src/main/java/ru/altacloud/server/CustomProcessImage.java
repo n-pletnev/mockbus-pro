@@ -1,12 +1,11 @@
 package ru.altacloud.server;
 
-import com.ghgande.j2mod.modbus.procimg.IllegalAddressException;
-import com.ghgande.j2mod.modbus.procimg.Register;
-import com.ghgande.j2mod.modbus.procimg.SimpleProcessImage;
-import com.ghgande.j2mod.modbus.procimg.SimpleRegister;
+import com.ghgande.j2mod.modbus.procimg.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.altacloud.model.ModbusDevice;
+
+import java.util.stream.IntStream;
 
 public class CustomProcessImage extends SimpleProcessImage {
 
@@ -19,6 +18,7 @@ public class CustomProcessImage extends SimpleProcessImage {
 
     private CustomProcessImage(ModbusDevice device) {
         this.device = device;
+        IntStream.range(1, 6).forEach(i -> this.addRegister(i, new SimpleRegister(0)));
     }
 
     @Override
