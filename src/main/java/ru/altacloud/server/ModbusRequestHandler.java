@@ -10,22 +10,27 @@ import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.altacloud.model.Blower;
 import ru.altacloud.model.ModbusDevice;
 import ru.altacloud.model.Pump;
 import ru.altacloud.model.Register;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ModbusRequestHandler implements ServiceRequestHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ModbusRequestHandler.class);
 
-    private final Map<Short, ModbusDevice> deviceMap;
+    private final Map<Short, ModbusDevice> deviceMap = new ConcurrentHashMap<>();
 
     public ModbusRequestHandler() {
-        deviceMap = Map.of(
-                (short) 1, ModbusDeviceFactory.createPump(1, 1500, 1700, new Pump.Settings(900, 2000, 500)));
+
+        deviceMap.put((short) 1, ModbusDeviceFactory.createPump(1, 1500, 1700,
+                new Pump.Settings(900, 2000, 500)));
+        deviceMap.put((short)2, ModbusDeviceFactory.createBlower(2,
+                new Blower.Settings(1000, 8000, 1000, 400, 100, 80)));
     }
 
     @Override
