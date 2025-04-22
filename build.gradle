@@ -1,0 +1,37 @@
+plugins {
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+application {
+    mainClass = 'ru.altacloud.Main'
+}
+
+//jar {
+//    manifest {
+//        attributes 'Main-Class': application.mainClass
+//    }
+//}
+
+group = 'ru.altacloud'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+//    implementation 'com.intelligt.modbus:jlibmodbus:1.2.9.5'
+    implementation 'com.ghgande:j2mod:3.2.1'
+// SLF4J API
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+
+    // Logback Classic (реализация SLF4J)
+    implementation 'ch.qos.logback:logback-classic:1.4.11'
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation "org.assertj:assertj-core:3.11.1"
+}
+
+test {
+    useJUnitPlatform()
+}
