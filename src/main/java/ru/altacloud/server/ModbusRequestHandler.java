@@ -34,6 +34,7 @@ public class ModbusRequestHandler implements ServiceRequestHandler {
         deviceMap.put((short) 142, ModbusDeviceFactory.createWaterTemperatureSensorPool(142, 500));
 
         IntStream.range(143, 193).forEach(i -> deviceMap.put((short) i, ModbusDeviceFactory.createDummy(i)));
+        IntStream.range(194, 225).forEach(i -> deviceMap.put((short) i, ModbusDeviceFactory.createValve(i)));
     }
 
     @Override

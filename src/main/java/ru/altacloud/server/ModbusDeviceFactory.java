@@ -41,4 +41,8 @@ public class ModbusDeviceFactory {
     public static ModbusDevice createDummy(Integer slaveID) {
         return new DummyDevice(slaveID);
     }
+
+    public static ModbusDevice createValve(Integer slaveID) {
+       return new Valve(slaveID);
+    }
 }

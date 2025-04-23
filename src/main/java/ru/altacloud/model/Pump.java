@@ -77,7 +77,8 @@ public class Pump implements ModbusDevice {
 
     @Override
     public void writeRegister(Register register) {
-        List<Integer> settings = List.of(SET_CURRENT_MIN.ordinal(), SET_CURRENT_MAX.ordinal(), SET_CURRENT_DELTA.ordinal());
+        List<Integer> settings = List.of(SET_CURRENT_MIN.ordinal(), SET_CURRENT_MAX.ordinal(), SET_CURRENT_DELTA.ordinal(),
+                SET_OVERPRESSURE_MAX.ordinal(), SET_OVERPRESSURE_MIN.ordinal());
         if (Objects.equals(register.getNumber(), MODE.ordinal()))
             setMode(register.getValue());
         if (settings.contains(register.getNumber()))
