@@ -1,6 +1,7 @@
 package ru.altacloud.model;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
 
 import static ru.altacloud.model.Blower.RegisterName.*;
@@ -41,7 +42,7 @@ public class Blower implements ModbusDevice {
 
         this.slaveID = slaveID;
 
-        this.registers = new HashMap<>() {{
+        this.registers = new ConcurrentHashMap<>() {{
             put(STATE.ordinal(), new Register(STATE.ordinal(), ON.ordinal()));
             put(MODE.ordinal(), new Register(MODE.ordinal(), ON.ordinal()));
 

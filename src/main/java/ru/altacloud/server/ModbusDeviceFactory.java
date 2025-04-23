@@ -1,8 +1,9 @@
 package ru.altacloud.server;
 
-import ru.altacloud.model.Blower;
-import ru.altacloud.model.ModbusDevice;
-import ru.altacloud.model.Pump;
+import ru.altacloud.model.*;
+
+import static ru.altacloud.model.TemperatureSensor.Purpose.AIR;
+import static ru.altacloud.model.TemperatureSensor.Purpose.WATER;
 
 public class ModbusDeviceFactory {
 
@@ -27,5 +28,17 @@ public class ModbusDeviceFactory {
     public static ModbusDevice createBlower(Integer slaveID) {
         Blower.Settings settings = new Blower.Settings(1000, 8000, 1000, 400, 100, 80);
         return new Blower(slaveID, settings);
+    }
+
+    public static ModbusDevice createWaterTemperatureSensorPool(Integer slaveID, Integer sensorsCount) {
+        return new TemperatureSensorPool(slaveID, WATER, sensorsCount);
+    }
+
+    public static ModbusDevice createAirTemperatureSensorPool(Integer slaveID, Integer sensorsCount) {
+        return new TemperatureSensorPool(slaveID, AIR, sensorsCount);
+    }
+
+    public static ModbusDevice createDummy(Integer slaveID) {
+        return new DummyDevice(slaveID);
     }
 }

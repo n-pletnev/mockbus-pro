@@ -1,9 +1,9 @@
 package ru.altacloud.model;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
 
-import static ru.altacloud.model.Blower.RegisterName.STATE;
 import static ru.altacloud.model.Mode.*;
 import static ru.altacloud.model.Pump.RegisterName.*;
 
@@ -34,7 +34,7 @@ public class Pump implements ModbusDevice {
         this.slaveID = slaveID;
         Random random = new Random();
 
-        registers = new HashMap<>() {{
+        registers = new ConcurrentHashMap<>() {{
             put(STATE.ordinal(), new Register(STATE.ordinal(), ON.ordinal()));
             put(MODE.ordinal(), new Register(MODE.ordinal(), AUTO.ordinal()));
             put(CURRENT_CONSUMPTION_A.ordinal(), new Register(CURRENT_CONSUMPTION_A.ordinal(), 0));
