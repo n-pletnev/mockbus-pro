@@ -8,20 +8,20 @@ import static ru.altacloud.model.DummyDevice.RegisterName.STATE;
 import static ru.altacloud.model.Mode.OFF;
 import static ru.altacloud.model.Mode.ON;
 
-public class DummyDevice implements ModbusDevice {
+public class DummyDevice implements ModbusDevice<Integer> {
 
     enum RegisterName {
-        STATE, MODE;
+        STATE, MODE
     }
 
     private final Integer slaveID;
-    private final Map<Integer, Register> registers;
+    private final Map<Integer, Register<Integer>> registers;
 
     public DummyDevice(Integer slaveID) {
         this.slaveID = slaveID;
         registers = new HashMap<>() {{
-            put(STATE.ordinal(), new Register(STATE.ordinal(), 0));
-            put(MODE.ordinal(), new Register(MODE.ordinal(), 0));
+            put(STATE.ordinal(), new Register<>(STATE.ordinal(), 0));
+            put(MODE.ordinal(), new Register<>(MODE.ordinal(), 0));
         }};
     }
 
@@ -31,20 +31,20 @@ public class DummyDevice implements ModbusDevice {
     }
 
     @Override
-    public Register readRegister(Integer number) {
+    public Register<Integer> readRegister(Integer number) {
         return Optional.ofNullable(this.registers.get(number))
                 .orElseThrow(() -> new IllegalArgumentException("Invalid registry number: " + number));
     }
 
     @Override
-    public List<Register> multipleRead(Integer start, Integer count) {
+    public List<Register<Integer>> multipleRead(Integer start, Integer count) {
         if (start > registers.size() - 1 || start + count > registers.size())
             throw new IllegalArgumentException("Invalid start: " + start);
         return IntStream.range(start, start + count).mapToObj(this::readRegister).toList();
     }
 
     @Override
-    public void writeRegister(Register register) {
+    public void writeRegister(Register<Integer> register) {
         if (Objects.equals(register.getNumber(), MODE.ordinal())) {
             setMode(register.getValue());
         }

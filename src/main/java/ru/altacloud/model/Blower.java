@@ -7,7 +7,7 @@ import java.util.stream.IntStream;
 import static ru.altacloud.model.Blower.RegisterName.*;
 import static ru.altacloud.model.Mode.*;
 
-public class Blower implements ModbusDevice {
+public class Blower implements ModbusDevice<Integer> {
 
     public record Settings(Integer currentMin, Integer currentMax, Integer currentDelta, Integer overpressureMax,
                            Integer overpressureMin, Integer underpressureMax) {}
@@ -22,7 +22,7 @@ public class Blower implements ModbusDevice {
     }
 
     private final Integer slaveID;
-    private final Map<Integer, Register> registers;
+    private final Map<Integer, Register<Integer>> registers;
 
     private final Integer workingCurrentConsumption;
 
@@ -43,22 +43,22 @@ public class Blower implements ModbusDevice {
         this.slaveID = slaveID;
 
         this.registers = new ConcurrentHashMap<>() {{
-            put(STATE.ordinal(), new Register(STATE.ordinal(), ON.ordinal()));
-            put(MODE.ordinal(), new Register(MODE.ordinal(), ON.ordinal()));
+            put(STATE.ordinal(), new Register<>(STATE.ordinal(), ON.ordinal()));
+            put(MODE.ordinal(), new Register<>(MODE.ordinal(), ON.ordinal()));
 
-            put(CURRENT_CONSUMPTION_A.ordinal(), new Register(CURRENT_CONSUMPTION_A.ordinal(), 0));
-            put(CURRENT_CONSUMPTION_B.ordinal(), new Register(CURRENT_CONSUMPTION_B.ordinal(), 0));
-            put(CURRENT_CONSUMPTION_C.ordinal(), new Register(CURRENT_CONSUMPTION_C.ordinal(), 0));
-            put(UNDERPRESSURE.ordinal(), new Register(UNDERPRESSURE.ordinal(), 0));
-            put(OVERPRESSURE.ordinal(), new Register(UNDERPRESSURE.ordinal(), 0));
+            put(CURRENT_CONSUMPTION_A.ordinal(), new Register<>(CURRENT_CONSUMPTION_A.ordinal(), 0));
+            put(CURRENT_CONSUMPTION_B.ordinal(), new Register<>(CURRENT_CONSUMPTION_B.ordinal(), 0));
+            put(CURRENT_CONSUMPTION_C.ordinal(), new Register<>(CURRENT_CONSUMPTION_C.ordinal(), 0));
+            put(UNDERPRESSURE.ordinal(), new Register<>(UNDERPRESSURE.ordinal(), 0));
+            put(OVERPRESSURE.ordinal(), new Register<>(UNDERPRESSURE.ordinal(), 0));
 
-            put(SET_OVERPRESSURE_MAX.ordinal(), new Register(SET_OVERPRESSURE_MAX.ordinal(), settings.overpressureMax));
-            put(SET_OVERPRESSURE_MIN.ordinal(), new Register(SET_OVERPRESSURE_MIN.ordinal(), settings.overpressureMin));
-            put(SET_UNDERPRESSURE_MAX.ordinal(), new Register(SET_UNDERPRESSURE_MAX.ordinal(), settings.underpressureMax));
+            put(SET_OVERPRESSURE_MAX.ordinal(), new Register<>(SET_OVERPRESSURE_MAX.ordinal(), settings.overpressureMax));
+            put(SET_OVERPRESSURE_MIN.ordinal(), new Register<>(SET_OVERPRESSURE_MIN.ordinal(), settings.overpressureMin));
+            put(SET_UNDERPRESSURE_MAX.ordinal(), new Register<>(SET_UNDERPRESSURE_MAX.ordinal(), settings.underpressureMax));
 
-            put(SET_CURRENT_MIN.ordinal(), new Register(SET_CURRENT_MIN.ordinal(), settings.currentMin));
-            put(SET_CURRENT_MAX.ordinal(), new Register(SET_CURRENT_MAX.ordinal(), settings.currentMax));
-            put(SET_CURRENT_DELTA.ordinal(), new Register(SET_CURRENT_DELTA.ordinal(), settings.currentDelta));
+            put(SET_CURRENT_MIN.ordinal(), new Register<>(SET_CURRENT_MIN.ordinal(), settings.currentMin));
+            put(SET_CURRENT_MAX.ordinal(), new Register<>(SET_CURRENT_MAX.ordinal(), settings.currentMax));
+            put(SET_CURRENT_DELTA.ordinal(), new Register<>(SET_CURRENT_DELTA.ordinal(), settings.currentDelta));
 
         }};
 
@@ -75,24 +75,24 @@ public class Blower implements ModbusDevice {
     }
 
     @Override
-    public List<Register> multipleRead(Integer start, Integer count) {
+    public List<Register<Integer>> multipleRead(Integer start, Integer count) {
         if (start > registers.size() - 1 || start + count > registers.size())
             throw new IllegalArgumentException("Invalid start: " + start);
         return IntStream.range(start, start + count).mapToObj(this::readRegister).toList();
     }
 
     @Override
-    public Register readRegister(Integer number) {
+    public Register<Integer> readRegister(Integer number) {
         List<Integer> currents = List.of(CURRENT_CONSUMPTION_A.ordinal(), CURRENT_CONSUMPTION_B.ordinal(), CURRENT_CONSUMPTION_C.ordinal());
-        if (currents.contains(number)) return new Register(number, generateCurrentConsumption());
-        if (Objects.equals(OVERPRESSURE.ordinal(), number)) return new Register(number, generateOverPressure());
-        if (Objects.equals(UNDERPRESSURE.ordinal(), number)) return new Register(number, generateUnderPressure());
+        if (currents.contains(number)) return new Register<>(number, generateCurrentConsumption());
+        if (Objects.equals(OVERPRESSURE.ordinal(), number)) return new Register<>(number, generateOverPressure());
+        if (Objects.equals(UNDERPRESSURE.ordinal(), number)) return new Register<>(number, generateUnderPressure());
         return Optional.ofNullable(this.registers.get(number))
                 .orElseThrow(() -> new IllegalArgumentException("Invalid registry number: " + number));
     }
 
     @Override
-    public void writeRegister(Register register) {
+    public void writeRegister(Register<Integer> register) {
         List<Integer> settings = List.of(SET_CURRENT_MIN.ordinal(), SET_CURRENT_MAX.ordinal(), SET_CURRENT_DELTA.ordinal(),
                 SET_OVERPRESSURE_MAX.ordinal(), SET_OVERPRESSURE_MIN.ordinal(), SET_UNDERPRESSURE_MAX.ordinal());
         if (Objects.equals(register.getNumber(), MODE.ordinal()))

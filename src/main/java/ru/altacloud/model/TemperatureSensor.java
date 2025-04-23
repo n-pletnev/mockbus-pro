@@ -5,7 +5,7 @@ import java.util.Random;
 public class TemperatureSensor {
 
     public enum Purpose {
-        WATER, AIR;
+        WATER, AIR
     }
 
     private final Integer registerNumber;
@@ -21,8 +21,8 @@ public class TemperatureSensor {
         }
     }
 
-    public Register readRegister(Integer number) {
-        return new Register(number, generateTemperature());
+    public Register<Integer> readRegister(Integer number) {
+        return new Register<>(number, generateTemperature());
     }
 
     public Integer getRegisterNumber() {

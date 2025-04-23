@@ -22,7 +22,7 @@ public class ModbusRequestHandler implements ServiceRequestHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ModbusRequestHandler.class);
 
-    private final Map<Short, ModbusDevice> deviceMap = new ConcurrentHashMap<>();
+    private final Map<Short, ModbusDevice<? extends Number>> deviceMap = new ConcurrentHashMap<>();
 
     public ModbusRequestHandler() {
         IntStream.range(1, 30).forEach(i -> deviceMap.put((short) i, ModbusDeviceFactory.createVihr450Pump(i)));
@@ -35,6 +35,7 @@ public class ModbusRequestHandler implements ServiceRequestHandler {
 
         IntStream.range(143, 193).forEach(i -> deviceMap.put((short) i, ModbusDeviceFactory.createDummy(i)));
         IntStream.range(194, 225).forEach(i -> deviceMap.put((short) i, ModbusDeviceFactory.createValve(i)));
+        IntStream.range(225, 255).forEach(i -> deviceMap.put((short) i, ModbusDeviceFactory.createFlowmeter(i)));
     }
 
     @Override
@@ -48,7 +49,9 @@ public class ModbusRequestHandler implements ServiceRequestHandler {
             ByteBuf registers = PooledByteBufAllocator.DEFAULT.buffer(request.getQuantity());
             try {
                 device.multipleRead(start, quantity).forEach(register -> {
-                    registers.writeShort(register.getValue());
+                    Number value = register.getValue();
+                    if (value instanceof Integer) registers.writeShort(value.intValue());
+                    if (value instanceof Float) registers.writeFloat(value.floatValue());
                 });
             } catch (IllegalArgumentException e) {
                 log.error("read register failed. slaveID: {} . error: {}", slaveID, e.getMessage());
@@ -59,6 +62,7 @@ public class ModbusRequestHandler implements ServiceRequestHandler {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onWriteSingleRegister(ServiceRequest<WriteSingleRegisterRequest, WriteSingleRegisterResponse> service) {
         short slaveID = service.getUnitId();
         WriteSingleRegisterRequest request = service.getRequest();
