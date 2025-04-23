@@ -20,8 +20,9 @@ repositories {
 }
 
 dependencies {
-//    implementation 'com.intelligt.modbus:jlibmodbus:1.2.9.5'
     implementation 'com.ghgande:j2mod:3.2.1'
+
+    implementation 'com.digitalpetri.modbus:modbus-slave-tcp:1.2.2'
 
     implementation 'org.slf4j:slf4j-api:2.0.17'
     implementation 'ch.qos.logback:logback-classic:1.5.13'

@@ -1,15 +1,16 @@
 package ru.altacloud.model;
 
-public class Register {
-    private final Integer number;
-    private Integer value;
+public class Register<T extends Number> {
 
-    public Register(Integer number, Integer value) {
+    private final Integer number;
+    private T value;
+
+    public Register(Integer number, T value) {
         this.number = number;
         this.value = value;
     }
 
-    void setValue(Integer value) {
+    void setValue(T value) {
         this.value = value;
     }
 
@@ -17,7 +18,7 @@ public class Register {
         return number;
     }
 
-    public Integer getValue() {
+    public T getValue() {
         return value;
     }
 }
