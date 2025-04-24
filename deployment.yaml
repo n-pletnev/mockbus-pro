@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mockbus-pro
+  labels:
+    app: mockbus-pro
+    project: altacloud
+    env: staging
+    version: 1.0.0
+    owner: PletnevNikolay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mockbus-pro
+  template: # POD configuration
+    metadata:
+      labels:
+        app: mockbus-pro # Use for service selector
+        project: altacloud-v2
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: mockbus-pro
+          image: ghcr.io/alta-soft/mockbus-pro:v1.0.0
+          imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: "1"
+              memory: "512Mi"
+            requests:
+              cpu: "0.5"
+              memory: "256Mi"
+          livenessProbe:
+            tcpSocket:
+              port: 5020
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 5020
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+      imagePullSecrets:
+        - name: github-docker-registry
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mockbus-pro
+  labels:
+    app: mockbus-pro
+spec:
+  type: LoadBalancer
+  loadBalancerIP: "51.250.81.79"
+  externalTrafficPolicy: Local
+  ports:
+    - port: 502
+      protocol: TCP
+      name: tcp-server-port
+      targetPort: 5020
+  selector:
+    app: mockbus-pro
+
+#---
+#
+#apiVersion: networking.k8s.io/v1
+#kind: Ingress
+#metadata:
+#  name: mockbus-pro-tcp-ingress
+#  annotations:
+#    nginx.ingress.kubernetes.io/backend-protocol: "TCP"
+#spec:
+#  ingressClassName: nginx
+#  rules:
+#    - host: mockbus-pro.example.com
+#      http:
+#        paths:
+#          - path: /
+#            pathType: Prefix
+#            backend:
+#              service:
+#                name: mockbus-pro
+#                port:
+#                  number: 5020
