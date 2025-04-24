@@ -1,4 +1,16 @@
 
+# Mockbus Pro
+
+Mockbus Pro is a Modbus TCP server simulator that emulates various industrial devices for testing and development purposes. It creates virtual representations of equipment such as pumps, blowers, temperature sensors, valves, and flowmeters, each with realistic behavior and register mappings.
+
+The server listens on port 5020 and supports standard Modbus TCP read and write operations. Each simulated device is assigned a specific Slave ID range and implements appropriate register structures with dynamic values that change over time to mimic real-world behavior.
+
+This tool is useful for:
+- Testing Modbus client applications without physical hardware
+- Development and debugging of SCADA systems
+- Training and educational purposes
+- Simulating complex industrial environments
+
 # Device Groups and Registers in ModbusRequestHandler
 
 ## Device Groups and SlaveID Ranges

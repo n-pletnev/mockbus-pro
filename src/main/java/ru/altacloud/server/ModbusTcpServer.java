@@ -39,7 +39,7 @@ public class ModbusTcpServer {
 
     public void run() throws ExecutionException, InterruptedException {
         slave.setRequestHandler(new ModbusRequestHandler());
-        slave.bind("", PORT)
+        slave.bind("0.0.0.0", PORT)
                 .whenComplete((server, t) -> {
                     if (t != null) {
                         log.error("Server Error", t);
